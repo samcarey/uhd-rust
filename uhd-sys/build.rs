@@ -5,16 +5,22 @@ use std::env;
 use std::path::{Path, PathBuf};
 
 fn main() {
-    // This reads the metadata in Cargo.toml and sends Cargo the appropriate output to link the
-    // libraries
-    let libraries = metadeps::probe().unwrap();
-
-    let uhd_include_path = libraries
-        .get("uhd")
-        .expect("uhd library not in map")
-        .include_paths
-        .get(0)
-        .expect("no include path for UHD headers");
+    let _ = dotenv::dotenv();
+    let uhd_include_path = if let Ok(path) = env::var("UHD_INCLUDE_DIR") {
+        // Use the path provided via environmental variable
+        Path::new(&path).to_owned()
+    } else {
+        // This reads the metadata in Cargo.toml and sends Cargo the appropriate output to link the
+        // libraries
+        let libraries = metadeps::probe().unwrap();
+        libraries
+            .get("uhd")
+            .expect("uhd library not in map")
+            .include_paths
+            .get(0)
+            .expect("no include path for UHD headers")
+            .to_owned()
+    };
     generate_bindings(&uhd_include_path);
 }
 
@@ -37,8 +43,7 @@ fn generate_bindings(include_path: &Path) {
         builder = builder.clang_arg("-I/usr/lib/gcc/arm-linux-gnueabihf/8/include");
     }
 
-    let bindings = builder.generate()
-        .expect("Failed to generate bindings");
+    let bindings = builder.generate().expect("Failed to generate bindings");
     bindings
         .write_to_file(out_path)
         .expect("Failed to write bindings to file");
