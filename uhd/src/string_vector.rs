@@ -12,10 +12,13 @@ pub(crate) struct StringVector(uhd_sys::uhd_string_vector_handle);
 impl StringVector {
     /// Creates a new empty string vector
     pub fn new() -> Result<Self, Error> {
+        println!("handle");
         let mut handle: uhd_sys::uhd_string_vector_handle = ptr::null_mut();
+        println!("handle2");
+        let result = unsafe { uhd_sys::uhd_string_vector_make(&mut handle) };
+        println!("handle3");
 
-        check_status(unsafe { uhd_sys::uhd_string_vector_make(&mut handle) })
-            .map(|_| StringVector(handle))
+        check_status(result).map(|_| StringVector(handle))
     }
 
     /// Returns the number of strings in this vector

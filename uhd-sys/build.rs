@@ -5,6 +5,10 @@ use std::env;
 use std::path::{Path, PathBuf};
 
 fn main() {
+    println!(r"cargo:rustc-link-search=C:\Users\groundstation\projects\assets\lib");
+    // println!("cargo:rustc-link-lib=gcc");
+    println!("cargo:rustc-link-lib=uhd");
+
     let _ = dotenv::dotenv();
     let uhd_include_path = if let Ok(path) = env::var("UHD_INCLUDE_DIR") {
         // Use the path provided via environmental variable
@@ -31,6 +35,8 @@ fn generate_bindings(include_path: &Path) {
     let out_path = out_dir.join("bindgen.rs");
 
     let mut builder = bindgen::builder()
+        // .clang_arg("--target=armv7_unknown_linux_musleabihf")
+        // .clang_arg("-IC:\\Users\\groundstation\\projects\\assets\\include")
         .whitelist_function("^uhd.+")
         .default_enum_style(bindgen::EnumVariation::ModuleConsts)
         .header(usrp_header.to_string_lossy().to_owned())

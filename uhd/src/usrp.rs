@@ -17,7 +17,9 @@ pub struct Usrp(uhd_sys::uhd_usrp_handle);
 
 impl Usrp {
     pub fn find(args: &str) -> Result<Vec<String>, Error> {
+        println!("before");
         let args = CString::new(args)?;
+        println!("after");
         let mut addresses = StringVector::new()?;
         check_status(unsafe { uhd_sys::uhd_usrp_find(args.as_ptr(), addresses.handle_mut()) })?;
         Ok(addresses.into())
@@ -607,7 +609,7 @@ impl Usrp {
     /// Returns the USRP's current time. Commands can be scheduled relative to this time.
     pub fn get_current_time(&self, mboard: usize) -> Result<TimeSpec, Error> {
         let mut time = TimeSpec::default();
-        let mut seconds_time_t: libc::time_t = Default::default();
+        let mut seconds_time_t: i64 = Default::default();
 
         check_status(unsafe {
             uhd_sys::uhd_usrp_get_time_now(

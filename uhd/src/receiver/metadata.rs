@@ -23,7 +23,7 @@ impl ReceiveMetadata {
     pub fn time_spec(&self) -> Option<TimeSpec> {
         if self.has_time_spec() {
             let mut time = TimeSpec::default();
-            let mut seconds_time_t: libc::time_t = Default::default();
+            let mut seconds_time_t: i64 = Default::default();
 
             check_status(unsafe {
                 uhd_sys::uhd_rx_metadata_time_spec(
