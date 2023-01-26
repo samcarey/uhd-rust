@@ -17,6 +17,7 @@ build = "build.rs"
 metadeps = "1.1.2"
 bindgen = "0.55.1"
 dotenv = "0.15"
+dotenv-build = "0.1"
 
 [package.metadata.pkg-config]
 uhd = "*"
